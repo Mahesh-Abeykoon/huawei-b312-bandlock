@@ -4,15 +4,15 @@ import React from 'react';
 const getQualityColor = (type, value) => {
     // Excellent (Dark Green) -> Good (Green) -> Fair (Orange) -> Poor (Red)
     if (type === 'SINR') {
-        if (value >= 25) return 'text-green-700';
-        if (value >= 15) return 'text-success';
+        if (value >= 20) return 'text-green-700';
+        if (value >= 13) return 'text-success';
         if (value >= 5) return 'text-orange-500';
         return 'text-danger';
     }
     if (type === 'RSRP') {
         if (value >= -80) return 'text-green-700';
-        if (value >= -95) return 'text-success';
-        if (value >= -110) return 'text-orange-500';
+        if (value >= -90) return 'text-success';
+        if (value >= -100) return 'text-orange-500';
         return 'text-danger';
     }
     if (type === 'RSRQ') {
@@ -32,17 +32,17 @@ const getQualityColor = (type, value) => {
 
 const getQualityLabel = (type, value) => {
     const numValue = parseFloat(value);
-    // Provide a short textual label for the center of bars
+    // Provide a short textual label - CORRECTED RANGES
     if (type === 'SINR') {
-        if (numValue >= 25) return 'Excellent';
-        if (numValue >= 15) return 'Good';
-        if (numValue >= 5) return 'Fair';
+        if (numValue >= 20) return 'Excellent';
+        if (numValue >= 13) return 'Good';
+        if (numValue >= 0) return 'Fair';
         return 'Poor';
     }
     if (type === 'RSRP') {
         if (numValue >= -80) return 'Excellent';
-        if (numValue >= -95) return 'Good';
-        if (numValue >= -110) return 'Fair';
+        if (numValue >= -90) return 'Good';
+        if (numValue >= -100) return 'Fair';
         return 'Poor';
     }
     if (type === 'RSRQ') {
@@ -77,13 +77,13 @@ const ColorBar = ({ value, min, max, label, unit }) => {
     const percentage = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
     const numValue = parseFloat(value);
 
-    // Dynamic color based on value, reusing logic
+    // Dynamic color based on quality for the bars
     const textColor = getQualityColor(label, numValue);
-    let color = 'bg-red-500'; // Poor
+    let barColor = 'bg-red-500'; // Poor
 
-    if (textColor.includes('orange')) color = 'bg-orange-500'; // Fair
-    else if (textColor.includes('success')) color = 'bg-green-400'; // Good
-    else if (textColor.includes('green-700')) color = 'bg-green-300'; // Excellent (lighter green)
+    if (textColor.includes('orange')) barColor = 'bg-orange-500'; // Fair
+    else if (textColor.includes('success')) barColor = 'bg-green-400'; // Good
+    else if (textColor.includes('green-700')) barColor = 'bg-green-300'; // Excellent
 
     const centerLabel = getQualityLabel(label, numValue);
 
@@ -91,27 +91,28 @@ const ColorBar = ({ value, min, max, label, unit }) => {
     const barsLit = Math.ceil((percentage / 100) * 4);
 
     return (
-        <div className="mb-2.5">
-            <div className="flex justify-between text-[11px] mb-1 font-medium text-slate-600">
+        <div className="mb-3">
+            <div className="flex justify-start gap-2 text-[10px] mb-1.5 font-medium text-slate-600">
                 <span>{label}</span>
                 <span className="font-mono">{value} {unit}</span>
             </div>
 
-            <div className="relative flex items-end justify-between h-8 w-full bg-slate-200 rounded overflow-hidden">
-                {[1, 2, 3, 4].map((bar) => (
-                    <div
-                        key={bar}
-                        className={`flex-1 mx-0.5 rounded-sm transition-all duration-700 ease-out ${
-                            bar <= barsLit ? color : 'bg-gray-400'
-                        }`}
-                        style={{ height: `${(bar / 4) * 100}%` }}
-                    ></div>
-                ))}
-
-                {/* Centered quality label */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className={`text-[10px] font-semibold tracking-wide ${textColor} bg-white/80 px-1 rounded`}>{centerLabel}</span>
+            <div className="flex items-center gap-3">
+                {/* Signal strength bars */}
+                <div className="flex items-end gap-0.5 h-5 pr-2">
+                    {[1, 2, 3, 4].map((bar) => (
+                        <div
+                            key={bar}
+                            className={`w-3 transition-all duration-700 ease-out rounded-sm ${
+                                bar <= barsLit ? barColor : 'bg-gray-300'
+                            }`}
+                            style={{ height: `${bar * 5}px` }}
+                        ></div>
+                    ))}
                 </div>
+
+                {/* Quality label */}
+                <span className="text-[10px] font-semibold text-slate-700">{centerLabel}</span>
             </div>
         </div>
     );
@@ -124,12 +125,13 @@ const SignalMonitor = ({ metrics }) => {
                 <div>
                     <div className="text-xs text-muted font-medium mb-1">Current Connection</div>
                     <div className="flex items-baseline gap-2">
-                                <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-none">
+                                <h1 className="text-2xl font-black text-slate-800 tracking-tight leading-none">
                                     {metrics.band ? `BAND ${metrics.band}` : 'NO BAND'}
                                 </h1>
-                                {/* Show LIVE only when connected flag is true */}
+                                {/* Show LIVE with blinking green dot */}
                                 {metrics.connected ? (
-                                    <span className="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded border border-green-200 font-bold animate-pulse">
+                                    <span className="flex items-center gap-1 text-[10px] text-green-600 font-bold">
+                                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                                         LIVE
                                     </span>
                                 ) : (
