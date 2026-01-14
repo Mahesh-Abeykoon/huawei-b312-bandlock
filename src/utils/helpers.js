@@ -8,20 +8,6 @@ export const parseXmlResponse = (xmlText) => {
 
     const result = {};
 
-    const traverse = (node, obj) => {
-        if (node.nodeType === 1) { // Element
-            if (node.childNodes.length === 1 && node.childNodes[0].nodeType === 3) {
-                // Leaf node with text
-                obj[node.nodeName] = node.textContent;
-            } else {
-                obj[node.nodeName] = {};
-                for (let i = 0; i < node.childNodes.length; i++) {
-                    traverse(node.childNodes[i], obj[node.nodeName]);
-                }
-            }
-        }
-    };
-
     if (xmlDoc.documentElement) {
         // Simple flat parser for common Hilink responses
         const root = xmlDoc.documentElement;

@@ -119,7 +119,8 @@ class HuaweiService {
                 wanIp: data.WanIPAddress || 'Calculating...',
                 status: 'Connected'
             };
-        } catch (e) {
+        } catch {
+            // Silent failure — return null to indicate missing info
             return null;
         }
     }
@@ -148,7 +149,7 @@ class HuaweiService {
                 }
             }
             return [];
-        } catch (e) {
+        } catch {
             return [];
         }
     }
