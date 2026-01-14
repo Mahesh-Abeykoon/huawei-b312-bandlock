@@ -16,7 +16,7 @@ const COMMON_BANDS = [
 
 import { routerManager } from '../services/routerApi';
 
-const BandLock = () => {
+const BandLock = ({ metrics }) => {
     const [selectedBands, setSelectedBands] = useState([]);
     const [isAuto, setIsAuto] = useState(true);
     const [isApplying, setIsApplying] = useState(false);
@@ -31,7 +31,7 @@ const BandLock = () => {
                 setIsAuto(false);
             } else {
                 setIsAuto(true);
-                setSelectedBands([]); // Empty means auto/all in our logic
+                setSelectedBands([]);
             }
             setInitLoaded(true);
         };
@@ -50,20 +50,28 @@ const BandLock = () => {
     };
 
     const handleSetAuto = () => {
+        // Auto selects the current best band (active band)
+        const currentBand = metrics?.band;
+        if (currentBand && typeof currentBand === 'number') {
+            setSelectedBands([currentBand]);
+        } else {
+            setSelectedBands([]);
+        }
         setIsAuto(true);
-        setSelectedBands([]);
     };
 
     const handleApply = async () => {
         setIsApplying(true);
 
-        const bandsToSend = isAuto ? [] : selectedBands;
+        const bandsToSend = selectedBands;
         const success = await routerManager.setBands(bandsToSend);
 
         if (success) {
-            // alert("Configuration Applied"); // Removed alert as requested to not show fake notifications
+            // Reflect the applied configuration in the UI immediately
+            setIsAuto(bandsToSend.length === 0);
+            setSelectedBands(bandsToSend);
         } else {
-            // alert("Failed"); // Silent fail or log
+            // Silent fail or log
         }
         setIsApplying(false);
     };
@@ -96,7 +104,7 @@ const BandLock = () => {
                 </div>
             </div>
 
-            <div className={`grid-cols-4 mb-4 transition-all duration-300 ${isAuto ? 'opacity-60 grayscale-[0.5]' : 'opacity-100'}`}>
+            <div className={`grid grid-cols-4 mb-4 transition-all duration-300 ${isAuto ? 'opacity-60 grayscale-[0.5]' : 'opacity-100'}`}>
                 {COMMON_BANDS.map((band) => {
                     const isSelected = selectedBands.includes(band.id);
                     return (

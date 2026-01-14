@@ -30,7 +30,37 @@ const getQualityColor = (type, value) => {
     return 'text-slate-700';
 };
 
-const SignalCard = ({ label, value, unit, description }) => {
+const getQualityLabel = (type, value) => {
+    const numValue = parseFloat(value);
+    // Provide a short textual label for the center of bars
+    if (type === 'SINR') {
+        if (numValue >= 25) return 'Excellent';
+        if (numValue >= 15) return 'Good';
+        if (numValue >= 5) return 'Fair';
+        return 'Poor';
+    }
+    if (type === 'RSRP') {
+        if (numValue >= -80) return 'Excellent';
+        if (numValue >= -95) return 'Good';
+        if (numValue >= -110) return 'Fair';
+        return 'Poor';
+    }
+    if (type === 'RSRQ') {
+        if (numValue >= -10) return 'Excellent';
+        if (numValue >= -15) return 'Good';
+        if (numValue >= -20) return 'Fair';
+        return 'Poor';
+    }
+    if (type === 'RSSI') {
+        if (numValue >= -65) return 'Excellent';
+        if (numValue >= -75) return 'Good';
+        if (numValue >= -85) return 'Fair';
+        return 'Poor';
+    }
+    return '';
+};
+
+const SignalCard = ({ label, value, unit }) => {
     const numValue = parseFloat(value);
     const colorClass = getQualityColor(label, numValue);
 
@@ -46,13 +76,19 @@ const SignalCard = ({ label, value, unit, description }) => {
 const ColorBar = ({ value, min, max, label, unit }) => {
     const percentage = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
     const numValue = parseFloat(value);
-    let color = 'bg-red-500';
 
     // Dynamic color based on value, reusing logic
     const textColor = getQualityColor(label, numValue);
-    if (textColor.includes('green-700')) color = 'bg-green-600';
-    else if (textColor.includes('success')) color = 'bg-green-400';
-    else if (textColor.includes('orange')) color = 'bg-orange-500';
+    let color = 'bg-red-500'; // Poor
+
+    if (textColor.includes('orange')) color = 'bg-orange-500'; // Fair
+    else if (textColor.includes('success')) color = 'bg-green-400'; // Good
+    else if (textColor.includes('green-700')) color = 'bg-green-300'; // Excellent (lighter green)
+
+    const centerLabel = getQualityLabel(label, numValue);
+
+    // Number of bars to light up (out of 4)
+    const barsLit = Math.ceil((percentage / 100) * 4);
 
     return (
         <div className="mb-2.5">
@@ -60,11 +96,22 @@ const ColorBar = ({ value, min, max, label, unit }) => {
                 <span>{label}</span>
                 <span className="font-mono">{value} {unit}</span>
             </div>
-            <div className="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden flex">
-                <div
-                    className={`h-full ${color} transition-all duration-700 ease-out shadow-inner`}
-                    style={{ width: `${percentage}%` }}
-                ></div>
+
+            <div className="relative flex items-end justify-between h-8 w-full bg-slate-200 rounded overflow-hidden">
+                {[1, 2, 3, 4].map((bar) => (
+                    <div
+                        key={bar}
+                        className={`flex-1 mx-0.5 rounded-sm transition-all duration-700 ease-out ${
+                            bar <= barsLit ? color : 'bg-gray-400'
+                        }`}
+                        style={{ height: `${(bar / 4) * 100}%` }}
+                    ></div>
+                ))}
+
+                {/* Centered quality label */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <span className={`text-[10px] font-semibold tracking-wide ${textColor} bg-white/80 px-1 rounded`}>{centerLabel}</span>
+                </div>
             </div>
         </div>
     );
@@ -77,13 +124,20 @@ const SignalMonitor = ({ metrics }) => {
                 <div>
                     <div className="text-xs text-muted font-medium mb-1">Current Connection</div>
                     <div className="flex items-baseline gap-2">
-                        <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-none">
-                            {metrics.band ? `BAND ${metrics.band}` : 'NO BAND'}
-                        </h1>
-                        <span className="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded border border-green-200 font-bold animate-pulse">
-                            LIVE
-                        </span>
-                    </div>
+                                <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-none">
+                                    {metrics.band ? `BAND ${metrics.band}` : 'NO BAND'}
+                                </h1>
+                                {/* Show LIVE only when connected flag is true */}
+                                {metrics.connected ? (
+                                    <span className="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded border border-green-200 font-bold animate-pulse">
+                                        LIVE
+                                    </span>
+                                ) : (
+                                    <span className="text-xs text-muted bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 font-medium">
+                                        OFFLINE
+                                    </span>
+                                )}
+                            </div>
                 </div>
             </div>
 
