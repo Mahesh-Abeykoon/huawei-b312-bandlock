@@ -82,8 +82,8 @@ const BandLock = ({ metrics }) => {
         <div className="card mb-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <div className="flex justify-between items-center mb-4">
                 <div>
-                    <h2 className="text-sm font-semibold text-slate-800">Band Locking</h2>
-                    <p className="text-xs text-muted">
+                    <h2 className="text-xs font-semibold text-slate-800">Band Locking</h2>
+                    <p className="text-[10px] text-muted">
                         {isAuto ? 'Automatic Selection (Best Signal)' : 'Manual Frequency Lock'}
                     </p>
                 </div>
@@ -112,17 +112,17 @@ const BandLock = ({ metrics }) => {
                             key={band.id}
                             onClick={() => toggleBand(band.id)}
                             className={`
-                relative p-2 rounded-lg text-center transition-all duration-200 border shadow-sm
+                relative p-1.5 rounded text-center transition-all duration-200 border shadow-sm
                 ${isSelected
                                     ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-md ring-1 ring-blue-500/20'
                                     : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 hover:shadow-md'}
               `}
                         >
-                            <div className="font-bold text-sm">{band.name}</div>
-                            <div className="text-[9px] opacity-70 scale-90">{band.freq.split(' ')[0]}</div>
+                            <div className="font-bold text-xs">{band.name}</div>
+                            <div className="text-[8px] opacity-70">{band.freq.split(' ')[0]}</div>
 
                             {isSelected && (
-                                <div className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full ring-2 ring-white"></div>
+                                <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-blue-500 rounded-full ring-1 ring-white"></div>
                             )}
                         </button>
                     );
