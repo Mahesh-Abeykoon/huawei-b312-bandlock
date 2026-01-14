@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "Router Band Locker & Signal Pro",
+    "short_name": "RouterCtrl",
+    "author": "Mahesh Abeykoon",
+    "version": "1.0.0",
+    "description": "Advanced band locking and signal monitoring for Huawei HiLink Routers (B310, B312, B535, etc).",
+    "action": {
+        "default_popup": "index.html",
+        "default_title": "Router Control"
+    },
+    "permissions": [
+        "storage",
+        "activeTab"
+    ],
+    "host_permissions": [
+        "http://192.168.8.1/*",
+        "http://192.168.1.1/*",
+        "http://192.168.0.1/*"
+    ]
+}
