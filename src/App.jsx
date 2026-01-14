@@ -17,10 +17,12 @@ function App() {
     rsrp: 0,
     rsrq: 0,
     sinr: 0,
-    rssi: 0
+    rssi: 0,
+    band: null,
+    connected: false
   });
 
-  const [cellId, setCellId] = useState(0);
+  const [_cellId, _setCellId] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [showLogs, setShowLogs] = useState(false);
@@ -75,9 +77,10 @@ function App() {
               rsrq: stats.rsrq,
               sinr: stats.sinr,
               rssi: stats.rssi,
-              band: stats.band // Pass band info
+              band: stats.band, // Pass band info
+              connected: stats.connected === undefined ? true : stats.connected
             });
-            if (stats.cellId) setCellId(stats.cellId);
+            if (stats.cellId) _setCellId(stats.cellId);
           }
         }
       }, 1000); // 1s refresh rate
@@ -115,7 +118,7 @@ function App() {
 
           <SignalMonitor metrics={metrics} />
 
-          <BandLock />
+          <BandLock metrics={metrics} />
         </>
       )}
 

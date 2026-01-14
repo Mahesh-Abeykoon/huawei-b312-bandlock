@@ -1,7 +1,6 @@
 # Huawei B312 Band Locker & Signal Monitor
 
-An advanced browser extension to unlock the full potential of your Huawei 4G Routers. 
-Built by **Mahesh Abeykoon**.
+An advanced browser extension to unlock the full potential of your Huawei 4G Routers.
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 
