@@ -175,10 +175,9 @@ class HuaweiService {
                 // AUTO MODE logic:
                 // NetworkMode 00 = Auto (allows 3G/4G/2G switching)
                 // NetworkBand 3FFFFFFF = All GSM/UMTS bands
-                // LTEBand 0 = All LTE bands (or sometimes 7FFFFFFFFFFFFFFF)
-                // We use 0 as it's the standard "All" for many Huawei firmwares in Auto mode
-                xmlBody = `<?xml version="1.0" encoding="UTF-8"?><request><NetworkMode>00</NetworkMode><NetworkBand>3FFFFFFF</NetworkBand><LTEBand>0</LTEBand></request>`;
-                log(`Resetting to Full Auto (Allowed 3G/4G)`);
+                // LTEBand 7FFFFFFFFFFFFFFF = Explicitly enable ALL LTE bands to force re-scan
+                xmlBody = `<?xml version="1.0" encoding="UTF-8"?><request><NetworkMode>00</NetworkMode><NetworkBand>3FFFFFFF</NetworkBand><LTEBand>7FFFFFFFFFFFFFFF</LTEBand></request>`;
+                log(`Resetting to Full Auto (Allowed 3G/4G, All Bands)`);
             } else {
                 // MANUAL MODE logic:
                 // NetworkMode 03 = 4G Only (Locks to LTE)

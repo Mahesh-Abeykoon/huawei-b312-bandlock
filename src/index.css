@@ -799,6 +799,65 @@ body {
   background-color: #86efac;
 }
 
+.bg-green-400 {
+  background-color: #4ade80;
+}
+
+.bg-green-600 {
+  background-color: #16a34a;
+}
+
+/* Font Sizes & Weights */
+.text-\[9px\] {
+  font-size: 9px;
+}
+
+.text-\[10px\] {
+  font-size: 10px;
+}
+
+.text-\[11px\] {
+  font-size: 11px;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.font-black {
+  font-weight: 900;
+}
+
+.leading-none {
+  line-height: 1;
+}
+
+/* Grid & Layout */
+.grid {
+  display: grid;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.border-slate-100 {
+  border-color: #f1f5f9;
+}
+
+.border-green-200 {
+  border-color: #bbf7d0;
+}
+
+.bg-slate-100 {
+  background-color: #f1f5f9;
+}
+
+.text-green-600 {
+  color: #16a34a;
+}
+
 /* Light Green */
 
 /* Transforms */
